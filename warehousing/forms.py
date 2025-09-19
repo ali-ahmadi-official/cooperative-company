@@ -11,9 +11,9 @@ class RawMaterialForm(forms.ModelForm):
     class Meta:
         model = RawMaterial
         fields = [
-            'filter_category', 'commodity', 'ternal', 'category', 'input_unit',
-            'output_unit', 'amount', 'output_amount', 'purchase_date',
-            'arrival_date', 'price', 'description'
+            'ternal', 'category', 'filter_category', 'commodity', 'amount',
+            'input_unit', 'output_unit', 'output_amount', 'purchase_date',
+            'arrival_date', 'price', 'supplier', 'description',
         ]
         widgets = {
             'purchase_date': forms.TextInput(attrs={'data-jdp': '', 'autocomplete': 'off'}),

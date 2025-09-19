@@ -13,6 +13,19 @@ class Unit(models.Model):
 
     def __str__(self):
         return self.name
+    
+class Supplier(models.Model):
+    name = models.CharField(verbose_name='نام', max_length=200)
+    address = models.CharField(verbose_name='آدرس', max_length=500)
+    phone_number = models.PositiveBigIntegerField(verbose_name='شماره همراه')
+    description = models.TextField(verbose_name='توضیحات')
+
+    class Meta:
+        verbose_name = 'تامین کننده'
+        verbose_name_plural = 'تامین کنندگان'
+
+    def __str__(self):
+        return self.name
 
 class CommodityCategory(models.Model):
     parent = models.ForeignKey('self', on_delete=models.CASCADE, related_name='category_categories', verbose_name='والد', null=True, blank=True)
@@ -26,6 +39,12 @@ class CommodityCategory(models.Model):
         return self.name
 
 class Commodity(models.Model):
+    TERNAL_CHOICES = (
+        ('1', 'وارداتی'),
+        ('2', 'داخلی'),
+    )
+
+    ternal = models.CharField(verbose_name='نوع', choices=TERNAL_CHOICES, max_length=1)
     category = models.ForeignKey(CommodityCategory, on_delete=models.DO_NOTHING, related_name='category_commodities', verbose_name='دسته بندی')
     name = models.CharField(verbose_name='نام', max_length=100)
     unit = models.ForeignKey(Unit, on_delete=models.DO_NOTHING, related_name='unit_commodity', verbose_name='واحد')
@@ -61,7 +80,7 @@ class RawMaterial(models.Model):
     input_unit = models.ForeignKey(Unit, on_delete=models.DO_NOTHING, related_name='input_unit_raw_materials', verbose_name='واحد ورودی')
     output_unit = models.ForeignKey(Unit, on_delete=models.DO_NOTHING, related_name='output_unit_raw_materials', verbose_name='واحد خروجی')
     output_amount = models.DecimalField(verbose_name='مقدار خروجی (قابل مصرف)', max_digits=12, decimal_places=3)
-    supplier = models.CharField(verbose_name='تامین کننده', max_length=200)
+    supplier = models.ForeignKey(Supplier, on_delete=models.DO_NOTHING, related_name='supplier_raw_materials', verbose_name='تامین کننده')
     purchase_date = models.CharField(verbose_name='تاریخ خرید', max_length=10)
     arrival_date = models.CharField(verbose_name='تاریخ ورود', max_length=10)
     price = models.PositiveBigIntegerField(verbose_name='قیمت خرید هر واحد (ریال)')

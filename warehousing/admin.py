@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Unit, RawMaterialCategory, RawMaterial, RawMaterialFactor, Commodity, CommodityCategory
+from .models import Unit, Supplier, RawMaterialCategory, RawMaterial, RawMaterialFactor, Commodity, CommodityCategory
 from .forms import RawMaterialForm, RawMaterialFactorForm
 
 class RawMaterialFactorInline(admin.StackedInline):
@@ -20,6 +20,10 @@ class UnitAdmin(admin.ModelAdmin):
     list_display = ['id', 'name']
     search_fields = ['name']
 
+class SupplierAdmin(admin.ModelAdmin):
+    list_display = ['id', 'name', 'address', 'phone_number']
+    search_fields = ['name']
+
 class CommodityCategoryAdmin(admin.ModelAdmin):
     list_display = ['id', 'name', 'get_parents']
     search_fields = ['name']
@@ -34,8 +38,8 @@ class CommodityCategoryAdmin(admin.ModelAdmin):
     get_parents.short_description = 'والد (ها)'
 
 class CommodityAdmin(admin.ModelAdmin):
-    list_display = ['id', 'name', 'get_categories']
-    list_filter = ['unit']
+    list_display = ['id', 'ternal', 'name', 'get_categories']
+    list_filter = ['ternal', 'unit']
     search_fields = ['name']
 
     def get_categories(self, obj):
@@ -122,6 +126,7 @@ class RawMaterialFactorAdmin(admin.ModelAdmin):
         return FormWithRequest
 
 admin.site.register(Unit, UnitAdmin)
+admin.site.register(Supplier, SupplierAdmin)
 admin.site.register(CommodityCategory, CommodityCategoryAdmin)
 admin.site.register(Commodity, CommodityAdmin)
 admin.site.register(RawMaterialCategory, RawMaterialCategoryAdmin)
