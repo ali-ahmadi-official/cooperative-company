@@ -1,0 +1,51 @@
+{% extends "admin/base_site.html" %}
+{% load static %}
+
+{% block extrahead %}
+{{ block.super }}
+<link rel="stylesheet" href="{% static 'my_admin/css/my_admin.css' %}">
+<script src="{% static 'my_admin/js/my_admin.js' %}"></script>
+<link type="text/css" rel="stylesheet" href="{% static 'css/jalalidatepicker.min.css' %}" />
+<script type="text/javascript" src="{% static 'js/jalalidatepicker.min.js' %}"></script>
+{% endblock %}
+
+{% block usertools %}
+<div id="user-tools">
+    <span class="environment-label "></span>
+    {% if request.user.is_authenticated %}
+    <strong>خوش آمدید، 
+        {{ request.user.get_full_name }} 
+        {% if request.user.is_superuser %}
+        (
+            مدیرعامل
+        )
+        {% else %}
+        (
+        {% for group in request.user.groups.all %}
+        {{ group.name }}{% if not forloop.last %}, {% endif %}
+        {% endfor %}
+        )
+        {% endif %}
+    </strong>
+    {% endif %}
+    <a href="/">نمایش وبگاه</a> /
+    {% if request.user.is_superuser %}
+    <a href="{% url 'admin:password_change' %}">تغییر گذرواژه</a> /
+    {% endif %}
+    <form action="{% url 'admin_logout' %}" method="post" class="my-logout-form">
+        {% csrf_token %}
+        <button type="submit" class="admin-logout">خروج</button>
+    </form>
+</div>
+{% endblock %}
+
+{% block nav-global %}
+{{ block.super }}
+<div id="datetime-box" style="font-family: Tahoma; font-size: 14px; color: #fff; margin: 10px;">
+    📅 <span id="date-part"></span> | 🕒 <span id="time-part"></span>
+</div>
+{% endblock %}
+
+{% block footer %}
+<script src="{% static 'js/data-jdp.js' %}"></script>
+{% endblock %}

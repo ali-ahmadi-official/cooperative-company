@@ -1,0 +1,32 @@
+#datetime-box {
+    color: #fff;
+    font-family: Tahoma, sans-serif;
+    font-size: 14px;
+    margin-right: 20px;
+}
+
+#live-clock {
+    font-weight: bold;
+}
+
+.admin-interface #user-tools {
+    margin: 0;
+    align-self: center;
+}
+
+.admin-logout {
+    background: none;
+    border: none;
+    padding: 0;
+    margin: 0;
+    display: inline;
+    color: #fff;
+    font: inherit;
+    cursor: pointer;
+}
+
+.my-logout-form {
+    display: inline;
+    margin: 0;
+    padding: 0;
+}
