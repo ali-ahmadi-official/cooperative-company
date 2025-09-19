@@ -25,59 +25,25 @@ class SupplierAdmin(admin.ModelAdmin):
     search_fields = ['name']
 
 class CommodityCategoryAdmin(admin.ModelAdmin):
-    list_display = ['id', 'name', 'get_parents']
+    list_display = ['id', 'name', 'parent']
+    list_filter = ['parent']
     search_fields = ['name']
-
-    def get_parents(self, obj):
-        parents = []
-        current = obj.parent
-        while current is not None:
-            parents.append(current.name)
-            current = current.parent
-        return ' > '.join(reversed(parents)) if parents else '---'
-    get_parents.short_description = 'والد (ها)'
 
 class CommodityAdmin(admin.ModelAdmin):
-    list_display = ['id', 'ternal', 'name', 'get_categories']
-    list_filter = ['ternal', 'unit']
+    list_display = ['id', 'name', 'category', 'unit']
+    list_filter = ['category', 'unit']
     search_fields = ['name']
-
-    def get_categories(self, obj):
-        parents = []
-        current = obj.category
-        while current is not None:
-            parents.append(current.name)
-            current = current.parent
-        return ' > '.join(reversed(parents)) if parents else '---'
-    get_categories.short_description = 'دسته بندی (ها)'
 
 class RawMaterialCategoryAdmin(admin.ModelAdmin):
-    list_display = ['id', 'name', 'get_parents']
+    list_display = ['id', 'name', 'ternal']
+    list_filter = ['ternal']
     search_fields = ['name']
-
-    def get_parents(self, obj):
-        parents = []
-        current = obj.parent
-        while current is not None:
-            parents.append(current.name)
-            current = current.parent
-        return ' > '.join(reversed(parents)) if parents else '---'
-    get_parents.short_description = 'والد (ها)'
 
 class RawMaterialAdmin(admin.ModelAdmin):
     form = RawMaterialForm
     inlines = [RawMaterialFactorInline]
-    list_display = ['id', 'ternal', 'get_categories', 'commodity', 'input_unit', 'output_unit', 'amount', 'output_amount']
-    list_filter = ['ternal', 'input_unit', 'output_unit']
-
-    def get_categories(self, obj):
-        parents = []
-        current = obj.category
-        while current is not None:
-            parents.append(current.name)
-            current = current.parent
-        return ' > '.join(reversed(parents)) if parents else '---'
-    get_categories.short_description = 'دسته بندی (ها)'
+    list_display = ['id', 'ternal', 'category', 'commodity_category', 'commodity', 'input_unit', 'output_unit', 'amount', 'output_amount']
+    list_filter = ['ternal', 'category', 'commodity_category', 'input_unit', 'output_unit']
 
     def get_fields(self, request, obj=None):
         fields = super().get_fields(request, obj)
@@ -87,9 +53,9 @@ class RawMaterialAdmin(admin.ModelAdmin):
 
     def formfield_for_foreignkey(self, db_field, request, **kwargs):
         if db_field.name == "commodity":
-            if request.GET.get('filter_category'):
+            if request.GET.get('commodity_category'):
                 kwargs['queryset'] = Commodity.objects.filter(
-                    category_id=request.GET.get('filter_category')
+                    category_id=request.GET.get('commodity_category')
                 )
             else:
                 kwargs['queryset'] = Commodity.objects.all()

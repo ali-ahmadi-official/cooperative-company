@@ -2,16 +2,10 @@ from django import forms
 from .models import CommodityCategory, RawMaterial, RawMaterialFactor
 
 class RawMaterialForm(forms.ModelForm):
-    filter_category = forms.ModelChoiceField(
-        queryset=CommodityCategory.objects.all(),
-        required=False,
-        label="دسته بندی کالا"
-    )
-
     class Meta:
         model = RawMaterial
         fields = [
-            'ternal', 'category', 'filter_category', 'commodity', 'amount',
+            'ternal', 'category', 'commodity_category', 'commodity', 'amount',
             'input_unit', 'output_unit', 'output_amount', 'purchase_date',
             'arrival_date', 'price', 'supplier', 'description',
         ]

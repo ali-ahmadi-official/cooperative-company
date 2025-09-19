@@ -27,8 +27,24 @@ class Supplier(models.Model):
     def __str__(self):
         return self.name
 
+class RawMaterialCategory(models.Model):
+    TERNAL_CHOICES = (
+        ('1', 'وارداتی'),
+        ('2', 'داخلی'),
+    )
+
+    ternal = models.CharField(verbose_name='نوع', choices=TERNAL_CHOICES, max_length=1)
+    name = models.CharField(verbose_name='نام', max_length=100)
+
+    class Meta:
+        verbose_name = 'دسته بندی ماده اولیه'
+        verbose_name_plural = 'دسته بندی های ماده اولیه'
+    
+    def __str__(self):
+        return self.name
+
 class CommodityCategory(models.Model):
-    parent = models.ForeignKey('self', on_delete=models.CASCADE, related_name='category_categories', verbose_name='والد', null=True, blank=True)
+    parent = models.ForeignKey(RawMaterialCategory, on_delete=models.CASCADE, related_name='category_categories', verbose_name='والد')
     name = models.CharField(verbose_name='نام', max_length=100)
 
     class Meta:
@@ -39,12 +55,6 @@ class CommodityCategory(models.Model):
         return self.name
 
 class Commodity(models.Model):
-    TERNAL_CHOICES = (
-        ('1', 'وارداتی'),
-        ('2', 'داخلی'),
-    )
-
-    ternal = models.CharField(verbose_name='نوع', choices=TERNAL_CHOICES, max_length=1)
     category = models.ForeignKey(CommodityCategory, on_delete=models.DO_NOTHING, related_name='category_commodities', verbose_name='دسته بندی')
     name = models.CharField(verbose_name='نام', max_length=100)
     unit = models.ForeignKey(Unit, on_delete=models.DO_NOTHING, related_name='unit_commodity', verbose_name='واحد')
@@ -52,17 +62,6 @@ class Commodity(models.Model):
     class Meta:
         verbose_name = 'کالا'
         verbose_name_plural = 'کالا ها'
-    
-    def __str__(self):
-        return self.name
-
-class RawMaterialCategory(models.Model):
-    parent = models.ForeignKey('self', on_delete=models.CASCADE, related_name='category_categories', verbose_name='والد', null=True, blank=True)
-    name = models.CharField(verbose_name='نام', max_length=100)
-
-    class Meta:
-        verbose_name = 'دسته بندی ماده اولیه'
-        verbose_name_plural = 'دسته بندی های ماده اولیه'
     
     def __str__(self):
         return self.name
@@ -75,6 +74,7 @@ class RawMaterial(models.Model):
 
     ternal = models.CharField(verbose_name='نوع', choices=TERNAL_CHOICES, max_length=1)
     category = models.ForeignKey(RawMaterialCategory, on_delete=models.DO_NOTHING, related_name='category_raw_materials', verbose_name='دسته بندی')
+    commodity_category = models.ForeignKey(CommodityCategory, on_delete=models.DO_NOTHING, related_name='commodity_category_raw_materials', verbose_name='دسته بندی کالا')
     commodity = models.ForeignKey(Commodity, on_delete=models.DO_NOTHING, related_name='commodity_raw_materials', verbose_name='کالا')
     amount = models.DecimalField(verbose_name='مقدار ورودی', max_digits=12, decimal_places=3)
     input_unit = models.ForeignKey(Unit, on_delete=models.DO_NOTHING, related_name='input_unit_raw_materials', verbose_name='واحد ورودی')

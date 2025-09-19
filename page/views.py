@@ -1,6 +1,6 @@
 from django.shortcuts import render
 from django.http import JsonResponse
-from warehousing.models import Commodity
+from warehousing.models import RawMaterialCategory, CommodityCategory, Commodity
 
 def get_commodity_unit(request, pk):
     try:
@@ -9,17 +9,25 @@ def get_commodity_unit(request, pk):
     except Commodity.DoesNotExist:
         return JsonResponse({'unit_id': None})
 
-def get_filtered_commodities(request):
+def get_categories_by_ternal(request):
     ternal = request.GET.get("ternal")
+    categories = RawMaterialCategory.objects.filter(ternal=ternal)
+    data = list(categories.values("id", "name"))
+    return JsonResponse(data, safe=False)
+
+def get_commodity_categories_by_category(request):
     category_id = request.GET.get("category_id")
+    commodity_categories = CommodityCategory.objects.filter(parent_id=category_id)
+    data = list(commodity_categories.values("id", "name"))
+    return JsonResponse(data, safe=False)
 
-    qs = Commodity.objects.all()
+def get_filtered_commodities(request):
+    commodity_category_id = request.GET.get("commodity_category_id")
 
-    if ternal:
-        qs = qs.filter(ternal=ternal)
-    if category_id:
-        qs = qs.filter(category_id=category_id)
+    if not commodity_category_id:
+        return JsonResponse([], safe=False)
 
+    qs = Commodity.objects.filter(category_id=commodity_category_id)
     commodities = qs.values("id", "name")
     return JsonResponse(list(commodities), safe=False)
 
