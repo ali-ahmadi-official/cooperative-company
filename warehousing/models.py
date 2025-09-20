@@ -93,40 +93,9 @@ class RawMaterial(models.Model):
     def __str__(self):
         return f'ماده اولیه با کالای {self.commodity}'
 
-class RawMaterialFactor(models.Model):
-    user = models.ForeignKey(User, on_delete=models.DO_NOTHING, related_name='user_raw_material_factors', verbose_name='کاربر')
-    raw_material = models.ForeignKey(RawMaterial, on_delete=models.CASCADE, related_name='raw_material_factors', verbose_name='ماده اولیه')
-    change = models.IntegerField(verbose_name='مقدار تغییر')
-    date = models.CharField(verbose_name='تاریخ', max_length=10)
-    description = models.TextField(verbose_name='توضیحات (اختیاری)', null=True, blank=True)
+class BuyRawMaterial(models.Model):
+    raw_material = models.ForeignKey(RawMaterial, on_delete=models.CASCADE, related_name='buy_raw_materials', verbose_name='ماده اولیه')
+    change = models.PositiveIntegerField(verbose_name='مقدار خرید')
 
-    class Meta:
-        verbose_name = 'فاکتور سایت'
-        verbose_name_plural = 'فاکتور های سایت'
-    
     def __str__(self):
-        full_name = self.user.get_full_name() or self.user.username
-        group_names = ", ".join([group.name for group in self.user.groups.all()])
-        return f"از طرف {full_name} ({group_names})"
-
-    def save(self, *args, **kwargs):
-        raw_material = self.raw_material
-        ratio = raw_material.amount / raw_material.output_amount
-        new_amount = raw_material.amount + self.change
-        new_output_amount = raw_material.output_amount + (self.change / ratio)
-
-        if new_amount < 0 or new_output_amount < 0:
-            raise ValidationError("مقدار ماده اولیه نمی‌تواند منفی باشد.")
-
-        if self.pk is None:
-            raw_material.amount = new_amount
-            raw_material.output_amount = new_output_amount
-            raw_material.save()
-
-        if not self.date:
-            today = timezone.now().date()
-            year, month, day = Gregorian(today.year, today.month, today.day).persian_tuple()
-            persian_date = f"{year}/{month:02d}/{day:02d}"
-            self.date = persian_date
-
-        super().save(*args, **kwargs)
+        return f'افزایش موجودی {self.raw_material}'

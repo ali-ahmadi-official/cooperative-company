@@ -1,0 +1,21 @@
+{% extends "admin/base_site.html" %}
+{% load static %}
+
+{% block title %}{% endblock %}
+{% block branding %}{% endblock %}
+{% block nav-global %}{% endblock %}
+{% block breadcrumbs %}{% endblock %}
+{% block sidebar %}{% endblock %}
+{% block usertools %}{% endblock %}
+{% block messages %}{% endblock %}
+
+{% block content %}
+<h2>افزودن خرید ماده اولیه</h2>
+<form id="submodel-form" method="post" action="{{ action_url }}">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <div class="submit-row">
+        <input type="submit" value="ثبت" class="default" />
+    </div>
+</form>
+{% endblock %}

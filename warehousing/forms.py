@@ -1,5 +1,5 @@
 from django import forms
-from .models import CommodityCategory, RawMaterial, RawMaterialFactor
+from .models import RawMaterial, BuyRawMaterial
 
 class RawMaterialForm(forms.ModelForm):
     class Meta:
@@ -17,19 +17,7 @@ class RawMaterialForm(forms.ModelForm):
     class Media:
         js = ('my_admin/js/rawmaterial.js',)
 
-class RawMaterialFactorForm(forms.ModelForm):
+class BuyRawMaterialForm(forms.ModelForm):
     class Meta:
-        model = RawMaterialFactor
-        fields = ['raw_material', 'change', 'description']
-
-    def __init__(self, *args, **kwargs):
-        self.request = kwargs.pop('request', None)
-        super().__init__(*args, **kwargs)
-
-    def save(self, commit=True):
-        instance = super().save(commit=False)
-        if self.request and self.request.user.is_authenticated:
-            instance.user = self.request.user
-        if commit:
-            instance.save()
-        return instance
+        model = BuyRawMaterial
+        fields = ['change']
